@@ -3,12 +3,28 @@ from selenium.webdriver.common.action_chains import ActionChains
 import time
 import os
 import traceback
+import datetime
 
 # with open(os.path.join('src', 'main.js')) as infile:
 # 	elimn_assin = infile.read()
 
-
 def search(query, DIAi, MESi, ANOi, DIAf, MESf, ANOf):
+    inicio = datetime.datetime(*[int(x) for x in [ANOi, MESi, DIAi]]) # transforma string em int :p
+    fim = datetime.datetime(*[int(x) for x in [ANOf, MESf, DIAf]])
+
+    resultados = []
+    valor = 0
+    print(inicio<fim)
+    while(inicio<fim):
+        temporaria = inicio + datetime.timedelta(days = 30)
+        res, val =  tempo(query, inicio.day, inicio.month, inicio.year, temporaria.day, temporaria.month, temporaria.year)
+        resultados += res
+        valor += val
+        inicio = temporaria
+    return resultados, valor
+
+
+def tempo(query, DIAi, MESi, ANOi, DIAf, MESf, ANOf):
     br = GLOBAL_BR
     query = query.replace(' ', '+')
     # Realiza a busca
@@ -40,7 +56,7 @@ def search(query, DIAi, MESi, ANOi, DIAf, MESf, ANOf):
     except:
         valor = 30
 
-    calculopage = int(valor/10)
+    calculopage = int(valor/10) + (valor%10 != 0)
 
     # Clica em ACEITAR as politicas de cookies
     time.sleep(4)
@@ -65,7 +81,7 @@ def search(query, DIAi, MESi, ANOi, DIAf, MESf, ANOf):
         except:
             print('não clicou para fechar o anuncioooooooooooo')
 
-    # Clica no primeiro botão que é difernete dos demais
+    # Clica no primeiro botão que é diferente dos demais
     try:
         CLICK('/html/body/section[4]/div/section[1]/div/section[2]/div/a')
     except:
@@ -85,33 +101,43 @@ def search(query, DIAi, MESi, ANOi, DIAf, MESf, ANOf):
     contador = 0
     isImagem = False
     noticias = 10
-    pagina = 1
-
     # =====================================================================================================================
+
+    # Avanças as páginas até o final
+    for page in range(2, calculopage):
+        try:
+            WAIT_CLICK('/html/body/section[4]/div/section[1]/{}section[11]/div/a'.format('div/' *page))
+            break
+        except:
+            print(f'Página atual: {page} -----------------------------------------------')
+            print('/html/body/section[4]/div/section[1]/{}section[11]/div/a'.format('div/' *page))
+            print(f'\n{querylink}\n')
+            continue
+
+        # while 1:
+        #     try:
+        #         WAIT_CLICK('/html/body/section[4]/div/section[1]/{}section[11]/div/a'.format('div/' *page))
+        #         break
+        #     except:
+        #         continue
+
+    pagina = 1
     while c < valor:
         i += 1
         c += 1
 
-        # Tenta clicar no botão de Carregar Mais - a cada 10 notícias        
+        # Incremantar página e resetar 'i'     
         if(i==11 and pagina<=calculopage):
-            try:
-                i = 1
-                if(pagina>=2):
-                    CLICK('/html/body/section[4]/div/section[1]/{}div/section[11]/div/a'.format('div/' *pagina))
-                pagina += 1
-            except:
-                print(f'\n erro para mudar de página   ------ i: {i}')
-                print(f'\n\n {querylink} \n\n')
-                pass
-        time.sleep(1)
-        
+            i = 1
+            pagina += 1
+
         # Tenta pegar um 'clicavel' novo
         try:
             corpo = WAIT_GET('/html/body/section[4]/div/section[1]/div/{}section[{}]'.format('div/' *pagina, i))
         except:
             # Se nao tiver, acabou todas as noticias ou deu erro :/
             print('\nerro para pegar o corpo da notícia')
-          # print(f'{corpo.text} - {i}')
+            print_exc()
             print(querylink)
             break
 
@@ -146,7 +172,9 @@ def search(query, DIAi, MESi, ANOi, DIAf, MESf, ANOf):
         title = el.get_attribute('title')
 
         # Coleta as outras informações do corpo da notícia
-        isImagem = (corpo.find_elements_by_tag_name('img'))
+        imagem = (corpo.find_elements_by_tag_name('img'))
+        isImagem = len(imagem)
+
         secaoNoticia = corpo.find_element_by_class_name('cor-e').text
         try:
             date = corpo.find_element_by_class_name('data-posts').text
@@ -159,9 +187,10 @@ def search(query, DIAi, MESi, ANOi, DIAf, MESf, ANOf):
         if isImagem == 0:
             isImagemtxt = 'Não tem imagem'
         elif isImagem == 1:
-            isImagemtxt = 'Tem imagem'
+            imagem = imagem[0]
+            isImagemtxt = imagem.get_attribute('src')
         else:
-            isImagemtxt = 'Erro para verificar a imagem. l.174'
+            isImagemtxt = 'Erro para verificar a imagem. l.166'
 
         # Cria o objeto da noticia no json
         data.append({

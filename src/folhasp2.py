@@ -91,6 +91,10 @@ def search(query, DIAi, MESi, ANOi, DIAf, MESf, ANOf):
         secaoNoticia = corpoglobal.find_element_by_tag_name('h3').text
         #descr = clear(el.find_element_by_tag_name('p'))
 
+        # Altera a ordem da data (12.nov.2019 às 13h01) 
+            # [12] [nov] [2019 às 13h01]
+        date = date.split('.')
+
         if any ([x in secaoNoticia for x in['FOTOFOLHA']]):
             c -= 1
             continue

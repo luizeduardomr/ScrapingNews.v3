@@ -11,12 +11,12 @@ import os
 
 options = Options()
 # Opção para Debug (Abre o Chrome)  - Se deixar ativado (com #) ele abre o chrome
-options.headless = True
+#options.headless = True
 options.add_argument("--log-level=3")
 options.add_argument('--ignore-certificate-errors')
 options.add_argument('--ignore-ssl-errors')
-#options.add_argument('start-maximized')     # Se der erro na linah de baixo, comenta ela e bota essa kk
-options.add_argument('window-size=1920x1080')
+options.add_argument('start-maximized')     # Se der erro na linah de baixo, comenta ela e bota essa kk
+#options.add_argument('window-size=1920x1080')
 
 
 GET   = lambda x : GLOBAL_BR.find_element_by_xpath(x)
@@ -84,7 +84,7 @@ class element_has_info:
 
 		return var
 
-waiter = WebDriverWait(GLOBAL_BR, 3)
+waiter = WebDriverWait(GLOBAL_BR, 10)
 wait  = lambda *getters : waiter.until(element_has_info(getters))
 
 WAIT_CLICK = lambda x : wait(lambda : CLICK(x))

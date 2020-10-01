@@ -14,10 +14,9 @@ if not os.path.exists('./resultados'):
 nomearquivo, palavrachave, opcao, datainicial, datafinal, quantidade = Iniciar()
 
 # Continua criando a pasta
-dir_path = os.path.join('./resultados', nomearquivo)
+dir_path = os.path.join('./resultados', f'{opcao} -  {palavrachave} - {nomearquivo}')
 if not os.path.exists(dir_path):
     os.makedirs(dir_path)
-
 
 # Atribui as datas para as variáveis
 DIAi = datainicial.split("/")[0]
@@ -35,7 +34,7 @@ results = []
 if opcao == 'folha':
     import src.folhasp2 as site_atual
 elif opcao == 'estadao':
-    import src.estadao2 as site_atual
+    import src.estadao3 as site_atual
 elif opcao == 'uol':
     import src.uol as site_atual
 else:
@@ -44,7 +43,7 @@ else:
 # Realiza a pesquisa
 try:
     pesquisa, valor = site_atual.search(query=palavrachave, DIAi=DIAi, MESi=MESi, ANOi=ANOi, DIAf=DIAf, MESf=MESf, ANOf=ANOf)
-    print(f'Finalização da pesquisa -- Nome do arquivo: {nomearquivo}')
+    print(f'Finalização da pesquisa -- Nome do arquivo: {opcao} -  {palavrachave} - {nomearquivo}')
 finally:
     site_atual.END()
 # Pra cada resultado da pesquisa, adiciona o resultado na lista 'results'
@@ -57,7 +56,7 @@ with open('{}.csv'.format(os.path.join(dir_path, "Resultados_da_coleta")), 'w', 
     for res in results:
         res['date'] = res['date'].replace('|', '-')
         res['secao'] = res['secao'].replace('?', '')
-        csv_file.write((res['title'] + '\t' + res['date'] + '\t' + res['secao'] + '\t' + res['imagem'] + '\t' + res['link']).replace('\n', ' '))
+        csv_file.write((res['date'] + '\t' + res['title'] + '\t' + res['secao'] + '\t' + res['imagem'] + '\t' + res['descr']+ '\t' + res['link']).replace('\n', ' '))
         csv_file.write('\n')
         arquivotxt = re.sub('\W', '_', res['title'])            
         sec_path = os.path.join(dir_path, res['secao'])
