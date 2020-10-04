@@ -4,27 +4,40 @@ import time
 import os
 import traceback
 import datetime
+import unicodedata
 
 # with open(os.path.join('src', 'main.js')) as infile:
 # 	elimn_assin = infile.read()
 
-def search(query, DIAi, MESi, ANOi, DIAf, MESf, ANOf):
-    inicio = datetime.datetime(*[int(x) for x in [ANOi, MESi, DIAi]]) # transforma string em int :p
-    fim = datetime.datetime(*[int(x) for x in [ANOf, MESf, DIAf]])
+valores = {
+       "totais" : 0,
+       "coletadas" : 0,
+       "ignoradas": 0
+}
 
+def search(query, DIAi, MESi, ANOi, DIAf, MESf, ANOf):
+    querylink = tempo(query, DIAi, MESi, ANOi, DIAf, MESf, ANOf, quit=True)
+    print(f'\n\nNotícias totais: {valores["totais"]}')
+    print(f'Link da notícia original: {querylink}')
+    inicio = datetime.datetime(*[int(x) for x in [ANOi, MESi, DIAi]]) 
+    fim = datetime.datetime(*[int(x) for x in [ANOf, MESf, DIAf]])
     resultados = []
     valor = 0
-    print(inicio<fim)
+
     while(inicio<fim):
-        temporaria = inicio + datetime.timedelta(days = 30)
-        res, val =  tempo(query, inicio.day, inicio.month, inicio.year, temporaria.day, temporaria.month, temporaria.year)
+        temporaria = inicio + datetime.timedelta(days = 7)
+        res, val =  tempo(query, inicio.day, inicio.month, inicio.year, temporaria.day, temporaria.month, temporaria.year, quit=False)
         resultados += res
         valor += val
         inicio = temporaria
+        print('\n--------------------------------------')
+        print(f'Notícias totais: {valores["totais"]}')
+        print(f'Notícias coletadas: {valores["coletadas"]}')
+        print(f'Notícias ignoradas: {valores["ignoradas"]}')
+        print('--------------------------------------\n')
     return resultados, valor
 
-
-def tempo(query, DIAi, MESi, ANOi, DIAf, MESf, ANOf):
+def tempo(query, DIAi, MESi, ANOi, DIAf, MESf, ANOf, quit):
     br = GLOBAL_BR
     query = query.replace(' ', '+')
     # Realiza a busca
@@ -54,11 +67,17 @@ def tempo(query, DIAi, MESi, ANOi, DIAf, MESf, ANOf):
         secaoqntd = TXT('/html/body/section[3]/div/section/form/section/div/p')
         valor = int(secaoqntd.split(' ')[2])
     except:
-        valor = 30
+        valor = 1
+
+    if quit:
+      valores["totais"] = valor
+      return querylink
 
     calculopage = int(valor/10) + (valor%10 != 0)
 
-    # Clica em ACEITAR as politicas de cookies
+    #print(f'Notícias encontradas (7 dias): {valor}')
+
+    # Clica em ACEITAR as politicas de cookies  
     time.sleep(4)
     try:
         CLICK('/html/body/div[6]/div/div/div[2]/button') 
@@ -79,7 +98,7 @@ def tempo(query, DIAi, MESi, ANOi, DIAf, MESf, ANOf):
         try:
             GET('/html/body/section[5]/div/div/button').click()
         except:
-            print('não clicou para fechar o anuncioooooooooooo')
+            print('não clicou para fechar o anuncio ----------------------------')
 
     # Clica no primeiro botão que é diferente dos demais
     try:
@@ -92,7 +111,7 @@ def tempo(query, DIAi, MESi, ANOi, DIAf, MESf, ANOf):
                     CLASS('go more-list-news btn-mais fn brd-e').click()
                 except:
                     #print('erro no click do botão---------------------------------')
-                    print_exc()
+                    pass
                     print(querylink)
     time.sleep(3)
     data = []
@@ -100,33 +119,23 @@ def tempo(query, DIAi, MESi, ANOi, DIAf, MESf, ANOf):
     c = 0
     contador = 0
     isImagem = False
-    noticias = 10
-    # =====================================================================================================================
+    # ==============================================================================================================================
 
     # Avanças as páginas até o final
     for page in range(2, calculopage):
         try:
             WAIT_CLICK('/html/body/section[4]/div/section[1]/{}section[11]/div/a'.format('div/' *page))
-            break
         except:
             print(f'Página atual: {page} -----------------------------------------------')
             print('/html/body/section[4]/div/section[1]/{}section[11]/div/a'.format('div/' *page))
             print(f'\n{querylink}\n')
             continue
-
-        # while 1:
-        #     try:
-        #         WAIT_CLICK('/html/body/section[4]/div/section[1]/{}section[11]/div/a'.format('div/' *page))
-        #         break
-        #     except:
-        #         continue
-
     pagina = 1
     while c < valor:
         i += 1
         c += 1
 
-        # Incremantar página e resetar 'i'     
+        # Incrementar página e resetar 'i'     
         if(i==11 and pagina<=calculopage):
             i = 1
             pagina += 1
@@ -175,7 +184,15 @@ def tempo(query, DIAi, MESi, ANOi, DIAf, MESf, ANOf):
         imagem = (corpo.find_elements_by_tag_name('img'))
         isImagem = len(imagem)
 
+        # Coleta a seção da notícia e tira a sua acentuação
         secaoNoticia = corpo.find_element_by_class_name('cor-e').text
+        secaoNoticia = secaoNoticia.replace('?', '')
+        secaoNoticia = secaoNoticia.replace('!', '')
+        secaoNoticia = secaoNoticia.replace(':', '')
+        secaoNoticia = unicodedata.normalize("NFD", secaoNoticia)
+        secaoNoticia = secaoNoticia.encode("ascii", "ignore")
+        secaoNoticia = secaoNoticia.decode("utf-8")
+
         try:
             date = corpo.find_element_by_class_name('data-posts').text
         except:
@@ -202,9 +219,14 @@ def tempo(query, DIAi, MESi, ANOi, DIAf, MESf, ANOf):
             'secao': secaoNoticia
         }
         )
+
+        #insere os valores no dicionário
+        valores["ignoradas"] += contador
+        valores["coletadas"] += 1
+
     # Pra cada notica, abre o artigo e puxa o conteudo
     for i in range(len(data)):
-        print(i+1)
+        print(f'{i+1} de {len(data)}')
 
         # Insere o link na posição i (notícia) do Json
         link = data[i]['link']
@@ -254,5 +276,6 @@ def tempo(query, DIAi, MESi, ANOi, DIAf, MESf, ANOf):
         except:
             print_exc()
         data[i]['content'] = content
+    print(querylink)
 
     return data, valor

@@ -39,8 +39,8 @@ def Iniciar():
         nomearquivo = len(os.listdir('resultados')) +1
         nomearquivo = f'coleta{nomearquivo}'
     if(datainicial == '' and datafinal == ''):
-        datainicial = '01/01/2019'
-        datafinal = '01/01/2020'
+        datainicial = '01/01/2010'
+        datafinal = '01/01/2011'
     if(palavrachave == ''):
         palavrachave = 'Mudanças climáticas'
     if(quantidade == ''):

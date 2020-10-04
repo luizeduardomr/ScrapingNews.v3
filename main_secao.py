@@ -49,13 +49,12 @@ finally:
 # Pra cada resultado da pesquisa, adiciona o resultado na lista 'results'
 for search_result in pesquisa:
     results.append(search_result)
-
+    
 # Faz o preenchimento de arquivos (todos)
 ## Preenche um CSV com os resultados obtidos (Título, Data, descrição e link)
 with open('{}.csv'.format(os.path.join(dir_path, "Resultados_da_coleta")), 'w',  encoding='utf-8') as csv_file:
     for res in results:
         res['date'] = res['date'].replace('|', '-')
-        res['secao'] = res['secao'].replace('?', '')
         csv_file.write((res['date'] + '\t' + res['title'] + '\t' + res['secao'] + '\t' + res['imagem'] + '\t' + res['descr']+ '\t' + res['link']).replace('\n', ' '))
         csv_file.write('\n')
         arquivotxt = re.sub('\W', '_', res['title'])            
@@ -70,5 +69,6 @@ with open('{}.csv'.format(os.path.join(dir_path, "Resultados_da_coleta")), 'w', 
                 content = 'Algo deu errado - main l.67 KeyError - Informar ao desenvolvedor'
             text.write(content)
             qntdresult+=1
+            # Gera o arquivo de coleta
 with open('{}.txt'.format(os.path.join(dir_path, "Parâmetros_da_coleta")), 'w', encoding='utf-8') as text:
-    text.write(f'Palavra chave: {palavrachave}\nNome da pasta: {nomearquivo}\nSite: {opcao}\nData inicial: {datainicial}\nData final: {datafinal}\nNotícias encontradas (no site): {valor}\nResultados obtidos: {qntdresult}')
+    text.write(f'Nome da pasta: {opcao} -  {palavrachave} - {nomearquivo}\nPalavra chave: {palavrachave}\nSite: {opcao}\nData inicial: {datainicial}\nData final: {datafinal}\nNotícias encontradas (no site): {valor}\nResultados obtidos: {qntdresult}')
