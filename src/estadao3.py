@@ -4,7 +4,6 @@ import time
 import os
 import traceback
 import datetime
-import unicodedata
 
 # with open(os.path.join('src', 'main.js')) as infile:
 # 	elimn_assin = infile.read()
@@ -184,14 +183,8 @@ def tempo(query, DIAi, MESi, ANOi, DIAf, MESf, ANOf, quit):
         imagem = (corpo.find_elements_by_tag_name('img'))
         isImagem = len(imagem)
 
-        # Coleta a seção da notícia e tira a sua acentuação
+        # Coleta a seção da notícia
         secaoNoticia = corpo.find_element_by_class_name('cor-e').text
-        secaoNoticia = secaoNoticia.replace('?', '')
-        secaoNoticia = secaoNoticia.replace('!', '')
-        secaoNoticia = secaoNoticia.replace(':', '')
-        secaoNoticia = unicodedata.normalize("NFD", secaoNoticia)
-        secaoNoticia = secaoNoticia.encode("ascii", "ignore")
-        secaoNoticia = secaoNoticia.decode("utf-8")
 
         try:
             date = corpo.find_element_by_class_name('data-posts').text

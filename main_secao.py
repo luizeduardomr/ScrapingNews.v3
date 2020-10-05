@@ -6,6 +6,7 @@ import re
 import traceback
 import json
 from src.interface import Iniciar
+# import unicodedata
 
 # Faz a criação da pasta resultados
 if not os.path.exists('./resultados'):
@@ -55,6 +56,12 @@ for search_result in pesquisa:
 with open('{}.csv'.format(os.path.join(dir_path, "Resultados_da_coleta")), 'w',  encoding='utf-8') as csv_file:
     for res in results:
         res['date'] = res['date'].replace('|', '-')
+        res['secao'] = res['secao'].replace('?', '')
+        res['secao'] = res['secao'].replace('!', '')
+        res['secao'] = res['secao'].replace(':', '')
+        # res['secao'] = unicodedata.normalize("NFD", res['secao'])
+        # res['secao'] = res['secao'].encode("ascii", "ignore")
+        # res['secao'] = res['secao'].decode("utf-8")
         csv_file.write((res['date'] + '\t' + res['title'] + '\t' + res['secao'] + '\t' + res['imagem'] + '\t' + res['descr']+ '\t' + res['link']).replace('\n', ' '))
         csv_file.write('\n')
         arquivotxt = re.sub('\W', '_', res['title'])            
