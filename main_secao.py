@@ -6,7 +6,6 @@ import re
 import traceback
 import json
 from src.interface import Iniciar
-# import unicodedata
 
 # Faz a criação da pasta resultados
 if not os.path.exists('./resultados'):
@@ -15,7 +14,8 @@ if not os.path.exists('./resultados'):
 nomearquivo, palavrachave, opcao, datainicial, datafinal, quantidade = Iniciar()
 
 # Continua criando a pasta
-dir_path = os.path.join('./resultados', f'{opcao} -  {palavrachave} - {nomearquivo}')
+dir_path = os.path.join(
+    './resultados', f'{opcao} -  {palavrachave} - {nomearquivo}')
 if not os.path.exists(dir_path):
     os.makedirs(dir_path)
 
@@ -43,28 +43,45 @@ else:
 
 # Realiza a pesquisa
 try:
-    pesquisa, valor = site_atual.search(query=palavrachave, DIAi=DIAi, MESi=MESi, ANOi=ANOi, DIAf=DIAf, MESf=MESf, ANOf=ANOf)
-    print(f'Finalização da pesquisa -- Nome do arquivo: {opcao} -  {palavrachave} - {nomearquivo}')
+    pesquisa, valor = site_atual.search(
+        query=palavrachave, DIAi=DIAi, MESi=MESi, ANOi=ANOi, DIAf=DIAf, MESf=MESf, ANOf=ANOf)
+    print(
+        f'Finalização da pesquisa -- Nome do arquivo: {opcao} -  {palavrachave} - {nomearquivo}')
 finally:
     site_atual.END()
 # Pra cada resultado da pesquisa, adiciona o resultado na lista 'results'
 for search_result in pesquisa:
     results.append(search_result)
-    
+
+def setfy(data, key):
+    visited = set([])
+    setfied = []
+
+    for element in data:
+        if element[key] not in visited:
+            visited.add(element[key])
+            setfied.append(element)
+
+    return setfied
+
+results = setfy(results, 'title')
+
 # Faz o preenchimento de arquivos (todos)
-## Preenche um CSV com os resultados obtidos (Título, Data, descrição e link)
+# Preenche um CSV com os resultados obtidos (Título, Data, descrição e link)
 with open('{}.csv'.format(os.path.join(dir_path, "Resultados_da_coleta")), 'w',  encoding='utf-8') as csv_file:
     for res in results:
-        res['date'] = res['date'].replace('|', '-')
-        res['secao'] = res['secao'].replace('?', '')
-        res['secao'] = res['secao'].replace('!', '')
-        res['secao'] = res['secao'].replace(':', '')
+        if(opcao == 'estadao'):
+            res['date'] = res['date'].replace('|', '-')
+            res['secao'] = res['secao'].replace('?', '')
+            res['secao'] = res['secao'].replace('!', '')
+            res['secao'] = res['secao'].replace(':', '')
         # res['secao'] = unicodedata.normalize("NFD", res['secao'])
         # res['secao'] = res['secao'].encode("ascii", "ignore")
         # res['secao'] = res['secao'].decode("utf-8")
-        csv_file.write((res['date'] + '\t' + res['title'] + '\t' + res['secao'] + '\t' + res['imagem'] + '\t' + res['descr']+ '\t' + res['link']).replace('\n', ' '))
+        csv_file.write((res['date'] + '\t' + res['title'] + '\t' + res['secao'] + '\t' +
+                        res['imagem'] + '\t' + res['descr'] + '\t' + res['link']).replace('\n', ' '))
         csv_file.write('\n')
-        arquivotxt = re.sub('\W', '_', res['title'])            
+        arquivotxt = re.sub('\W', '_', res['title'])
         sec_path = os.path.join(dir_path, res['secao'])
         if not os.path.exists(sec_path):
             os.makedirs(sec_path)
@@ -75,7 +92,7 @@ with open('{}.csv'.format(os.path.join(dir_path, "Resultados_da_coleta")), 'w', 
             except KeyError:
                 content = 'Algo deu errado - main l.67 KeyError - Informar ao desenvolvedor'
             text.write(content)
-            qntdresult+=1
+            qntdresult += 1
             # Gera o arquivo de coleta
 with open('{}.txt'.format(os.path.join(dir_path, "Parâmetros_da_coleta")), 'w', encoding='utf-8') as text:
     text.write(f'Nome da pasta: {opcao} -  {palavrachave} - {nomearquivo}\nPalavra chave: {palavrachave}\nSite: {opcao}\nData inicial: {datainicial}\nData final: {datafinal}\nNotícias encontradas (no site): {valor}\nResultados obtidos: {qntdresult}')

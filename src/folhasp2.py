@@ -59,9 +59,17 @@ def search(query, DIAi, MESi, ANOi, DIAf, MESf, ANOf):
             # Verifica se ainda tem o botão para ir para a próxima página
             # Se tiver, ele clica. Senão, significa que acabaram as notícias
             if(findClass('c-pagination__arrow') != 0):
-                br.find_elements_by_class_name('c-pagination__arrow')[-1].click()
+                try:
+                    br.find_elements_by_class_name('c-pagination__arrow')[-1].click()
+                except:
+                    try:
+                        br.find_elements_by_class_name('c-pagination__arrow')[1].click()
+                    except:
+                        print('erro pra mudr de página...')
+                        pass
+
                 i = 0
-                print(f'================= entrou no if l.62 --- Valor do i:  {i} ========================')
+                print(f'================= entrou no if l.64 --- Valor do i:  {i} ========================')
                 continue
                 time.sleep(.10)
             else:
@@ -70,11 +78,13 @@ def search(query, DIAi, MESi, ANOi, DIAf, MESf, ANOf):
         # Tenta pegar a proxima noticia
         try:
             if(findElement(f'/html/body/main/div/div/form/div[2]/div/div/div[2]/ol/li[{i}]') != 0):
-                corpoglobal = WAIT_GET(f'/html/body/main/div/div/form/div[2]/div/div/div[2]/ol/li[{i}]')
+                corpoglobal = WAIT_GET(f'/html/body/main/div/div/form/div[2]/div/div/div[2]/ol/ li[{i}]')
 
             elif(findElement(f'/html/body/main/div/div/form/div[2]/div/div/div[2]/ol/li[{i}]') != 0):
                 corpoglobal = WAIT_GET(f'/html/body/main/div/div/form/div[2]/div/div/div[2]/ol/li[{i}]')
                 #corpoglobal = WAIT_GET(f'/html/body/main/div/div/form/div[2]/div/div/div[2]/ol/li[{i}]/div[2]/div/a')
+                #/html/body/main/div/div/form/div[2]/div/div/div[2]/ol/li[1]
+                
         except:
             # Se nao tiver, tenta avancar para a proxima pagina
             if(findElement('/html/body/main/div/div/form/div[2]/div/div/div[2]/nav/ul/li[8]/a') != 0):
@@ -87,7 +97,7 @@ def search(query, DIAi, MESi, ANOi, DIAf, MESf, ANOf):
         #print([x.text for x in corpoglobal.find_elements_by_tag_name('p')])
         link = corpoglobal.find_element_by_tag_name('a').get_attribute('href')
         title = clear(corpoglobal.find_element_by_class_name('c-headline__title'))
-        date = corpoglobal.find_element_by_tag_name('time').get_attribute('datetime')
+        date = corpoglobal.find_element_by_tag_name('time').get_attribute('datetime').text
         secaoNoticia = corpoglobal.find_element_by_tag_name('h3').text
         #descr = clear(el.find_element_by_tag_name('p'))
 
@@ -135,7 +145,10 @@ def search(query, DIAi, MESi, ANOi, DIAf, MESf, ANOf):
                 lista.append(paragrafo.text)
             content = "\n".join(lista)
         except:
-            content = 'erro no conteúdo durante a coleta de dados'
+            try:
+                TXT('/html/body/table[5]/tbody/tr/td[2]/p[2]')
+            except:
+                content = 'erro no conteúdo durante a coleta de dados'
         data[i]['content'] = content
 
     return data, valor

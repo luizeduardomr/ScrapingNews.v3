@@ -138,6 +138,8 @@ def tempo(query, DIAi, MESi, ANOi, DIAf, MESf, ANOf, quit):
         if(i==11 and pagina<=calculopage):
             i = 1
             pagina += 1
+            valores["coletadas"] += 10
+
 
         # Tenta pegar um 'clicavel' novo
         try:
@@ -215,7 +217,6 @@ def tempo(query, DIAi, MESi, ANOi, DIAf, MESf, ANOf, quit):
 
         #insere os valores no dicionário
         valores["ignoradas"] += contador
-        valores["coletadas"] += 1
 
     # Pra cada notica, abre o artigo e puxa o conteudo
     for i in range(len(data)):
