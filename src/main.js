@@ -1,73 +1,3 @@
-// ==UserScript==
-// @name         Burlesco
-// @namespace    https://burles.co/
-// @version      11.18
-// @description  Leia notícias sem ser assinante, burle o paywall
-// @author       rodorgas & AugustoResende
-// @supportURL   https://burles.co
-// @icon64       https://burles.co/userscript/icon.png
-// Atenção:      Caso algum site não funcione logo após a instalação, limpe o cache do navegador.
-// @grant        GM_webRequest
-// @grant        GM_xmlhttpRequest
-// @connect      gauchazh.clicrbs.com.br
-// @connect      static.infoglobo.com.br
-// @connect      cdn.tinypass.com
-// @match        *://www.bloomberg.com/*
-// @match        *://correio.rac.com.br/*
-// @match        *://*.nsctotal.com.br/*
-// @match        *://www.economist.com/*
-// @match        *://*.estadao.com.br/*
-// @match        *://foreignpolicy.com/*
-// @match        *://*.fivewall.com.br/*
-// @match        *://*.folha.uol.com.br/*
-// @match        *://*.folha.com.br/*
-// @match        *://gauchazh.clicrbs.com.br/*
-// @match        *://*.zh.clicrbs.com.br/*
-// @match        *://api.clicrbs.com.br/*
-// @match        *://*.gazetadopovo.com.br/*
-// @match        *://ogjs.infoglobo.com.br/*
-// @match        *://*.jota.info/*
-// @match        *://www.jornalnh.com.br/*
-// @match        *://www.netdeal.com.br/*
-// @match        *://*.nytimes.com/*
-// @match        *://*.nyt.com/*
-// @match        *://*.oglobo.globo.com/*
-// @match        *://www.rbsonline.com.br/*
-// @match        *://api.tinypass.com/*
-// @match        *://cdn.tinypass.com/*
-// @match        *://dashboard.tinypass.com/*
-// @match        *://*.washingtonpost.com/*
-// @match        *://*.exame.abril.com.br/*
-// @match        *://www.eltiempo.com/*
-// @match        *://super.abril.com.br/*
-// @match        *://veja.abril.com.br/*
-// @match        *://quatrorodas.abril.com.br/*
-// @match        *://*.uol.com.br/*
-// @match        *://www.uol/*
-// @match        *://*.wsj.com/*
-// @match        *://*.ft.com/*
-// @match        *://*.gramophone.co.uk/*
-// @match        *://*.folhadelondrina.com.br/*
-// @match        *://*.wired.com/*
-// @match        *://www.jornalvs.com.br/*
-// @match        *://*.br18.com.br/*
-// @match        *://*.diariopopular.com.br/*
-// @match        *://*.haaretz.com/*
-// @match        *://*.haaretz.co.il/*
-// @match        *://*.diarinho.com.br/*
-// @match        *://*.diariodaregiao.com.br/*
-// @match        *://*.correio24horas.com.br/*
-// @match        *://*.dgabc.com.br/*
-// @match        *://crusoe.com.br/*
-// @match        *://*.em.com.br/*
-// @match        *://*.forbes.pl/*
-// @match        *://*.newsweek.pl/*
-// @webRequest [{"selector":"*://correio-static.cworks.cloud/vendor/bower_components/paywall.js/paywall.js*","action":"cancel"},{"selector":{"include":"*://paywall.folha.uol.com.br/*","exclude":"*://paywall.folha.uol.com.br/status.php"} ,"action":"cancel"},{"selector":"*://static.folha.uol.com.br/paywall/*","action":"cancel"},{"selector":"*://ogjs.infoglobo.com.br/*/js/controla-acesso-aux.js","action":"cancel"},{"selector":"*://static.infoglobo.com.br/paywall/register-piano/*/scripts/nova-tela-register.js","action":"cancel"},{"selector":"*://www.netdeal.com.br/*","action":"cancel"},{"selector":"*://correio.rac.com.br/includes/js/novo_cp/fivewall.js*","action":"cancel"},{"selector":"*://dashboard.tinypass.com/xbuilder/experience/load*","action":"cancel"},{"selector":"*://*.fivewall.com.br/*","action":"cancel"},{"selector":"*://www.rbsonline.com.br/cdn/scripts/SLoader.js","action":"cancel"},{"selector":"*://*.nytimes.com/js/mtr.js","action":"cancel"},{"selector":"*://*.washingtonpost.com/wp-stat/pwapi/*","action":"cancel"},{"selector":"*://cdn.tinypass.com/api/tinypass.min.js","action":"cancel"},{"selector":"*://api.tinypass.com/tpl/*","action":"cancel"},{"selector":"*://tm.jsuol.com.br/modules/content-gate.js","action":"cancel"},{"selector":"*://gauchazh.clicrbs.com.br/static/main*","action":"cancel"},{"selector":"*://www.rbsonline.com.br/cdn/scripts/special-paywall.min.js*","action":"cancel"},{"selector":"https://paywall.nsctotal.com.br/behaviors","action":"cancel"},{"selector":"*://*.estadao.com.br/paywall/*","action":"cancel"},{"selector":"*://www.folhadelondrina.com.br/login.php*","action":"cancel"},{"selector":"https://www.eltiempo.com/js/desktopArticle.js*","action":"cancel"},{"selector":"*://*.haaretz.co.il/*/inter.js","action":"cancel"},{"selector":"*://*.themarker.com/*/inter.js","action":"cancel"},{"selector":"*://*.diarinho.com.br/wp-admin/admin-ajax.php","action":"cancel"},{"selector":"*://diarinho.com.br/wp-admin/admin-ajax.php","action":"cancel"},{"selector":"*://static.infoglobo.com.br/paywall/js/tiny.js","action":"cancel"}]
-// @run-at       document-start
-// @noframes
-// ==/UserScript==
-
-// run_at: document_start
 if (/gauchazh\.clicrbs\.com\.br/.test(document.location.host)) {
   document.addEventListener('DOMContentLoaded', function() {
     function patchJs(jsurl) {
@@ -81,6 +11,7 @@ if (/gauchazh\.clicrbs\.com\.br/.test(document.location.host)) {
           injectme = injectme.replace(/[a-z].requestCPF\|\|!1,/g, 'false,');
           injectme = injectme.replace(
             /![a-z].showLoginPaywall&&![a-z].showPaywall\|\|!1/g, 'true');
+          injectme = injectme.replace('throw new Error("only one instance of babel-polyfill is allowed");', '');
           var script = document.createElement('script');
           script.type = 'text/javascript';
           var textNode = document.createTextNode(injectme);
@@ -196,11 +127,13 @@ document.addEventListener('DOMContentLoaded', function() {
 
   else if (/abril\.com\.br/.test(document.location.host))
     code = `
-      document.queryselectorall('.callpaywall')
-        .foreach(x => x.remove());
-      document.queryselectorall('.content-blocked')
-        .foreach(x => x.classlist.remove('content-blocked'))
+      window.setTimeout(function() {
+        document.querySelector('body').classList.remove('disabledByPaywall')
+        document.querySelector('.piano-offer-overlay').remove()
+        document.querySelector('#piano_offer').remove()
+      }, 10000)
     `;
+
 
   else if(/correio24horas\.com\.br/.test(document.location.host))
     // remover tudo relacionado ao paywall e remover limite de altura no div do conteúdo da matéria

@@ -31,6 +31,12 @@ TXT2 = lambda x : GLOBAL_BR.find_element_by_tag_name(x)
 CLASSCLICK = lambda x : GLOBAL_BR.find_element_by_class_name(x).click()
 CLASSCLICK2 = lambda x : GLOBAL_BR.find_element_by_tag_name(x).click()
 
+def clickNow(x):
+	try:
+		GLOBAL_BR.find_element_by_class_name(x).click()
+	except:
+		return 0
+
 
 def findClass(x):
 	try:
