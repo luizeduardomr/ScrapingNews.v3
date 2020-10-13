@@ -1,3 +1,4 @@
+from os import link
 from src.browser import *
 import time
 import re
@@ -136,23 +137,49 @@ def search(query, DIAi, MESi, ANOi, DIAf, MESf, ANOf):
         time.sleep(.5)
     # Para cada notica, abre o artigo e puxa o conteudo
     for i in range(len(data)):
+        print(f'{i+1} de {len(data)}')
         link = data[i]['link']
         br.get(link)
         lista = []
+        content = 'Conteúdo não coletado (Essa mensagem foi recebida antes da coleta, significando que a coleta não foi feita'
         try:
             content = wait(
                 lambda: CLASS('c-news__body'),
                 lambda: CLASS('js-news-content'),
-                lambda: CLASS('c-news__content')
+                lambda: CLASS('c-news__content'),
+                lambda: CLASS('content')
                 )
             for paragrafo in content.find_elements_by_tag_name('p'):
                 lista.append(paragrafo.text)
             content = "\n".join(lista)
         except:
             try:
-                TXT('/html/body/table[5]/tbody/tr/td[2]/p[2]')
+                for i in range(11):
+                    i +=1
+                    if(findElement('/html/body/table[5]/tbody/tr/td[2]/p') != 0):
+                        content = TXT('/html/body/table[5]/tbody/tr/td[2]/p')
+
+                    elif(findElement(f'/html/body/table[5]/tbody/tr/td[2]/p[{i}]')!=0):
+                        content = TXT(f'/html/body/table[5]/tbody/tr/td[2]/p[{i}]')
+
+                    elif(findElement(f'/html/body/div[1]/div[1]/div[8]/div/p[{i}]')!=0):
+                            content = TXT(f'/html/body/div[1]/div[1]/div[8]/div/p[{i}]')
+
+                    elif(findElement(f'/html/body/div[2]/div[2]/div[2]/div[2]/div[1]/article/div[2]/p[{i}]')!=0):
+                            content = TXT(f'/html/body/div[2]/div[2]/div[2]/div[2]/div[1]/article/div[2]/p[{i}]')
+                            
+                    elif(findElement('/html/body/main/article/div[1]/div[2]/div/div[2]/div/div/div[1]/div/div[2]/div[3]/p[{i}]')!=0):
+                            content = TXT('/html/body/main/article/div[1]/div[2]/div/div[2]/div/div/div[1]/div/div[2]/div[3]/p[{i}]')
+
+                    elif(findElement(f'/html/body/div[1]/div[6]/div/p[{i}]')!=0):
+                            content = TXT(f'/html/body/div[1]/div[6]/div/p[{i}]')
+
+                    # elif(findElement('')!=0):
+                    #         content = TXT('')
             except:
-                content = 'erro no conteúdo durante a coleta de dados'
+                content = 'Erro durante a coleta de conteúdo'
+                print('\n\nErro na coleta ----------------------------------')
+                print(f'{link}\n\n')
         data[i]['content'] = content
 
     return data, valor

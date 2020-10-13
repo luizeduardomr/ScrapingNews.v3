@@ -1,3 +1,28 @@
 {
-    "python.pythonPath": "C:\\Python38\\python3.exe"
+    "workbench.iconTheme": "eq-material-theme-icons-darker",
+    "workbench.colorTheme": "Dracula Refined",
+    "terminal.integrated.rendererType": "canvas",
+    "editor.suggestSelection": "first",
+    "vsintellicode.modify.editor.suggestSelection": "automaticallyOverrodeDefaultValue",
+    "python.languageServer": "Pylance",
+    "window.zoomLevel": 0,
+    "workbench.settings.editor": "json",
+    "workbench.settings.useSplitJSON": true,
+    "editor.tabSize": 4,
+    "editor.fontSize": 14,
+    "files.autoSave": "onFocusChange",
+    "editor.fontFamily": "Consolas, 'Courier New', monospace",
+    "editor.renderWhitespace": "selection",
+    "editor.cursorStyle": "line",
+    "editor.multiCursorModifier": "alt",
+    "editor.insertSpaces": true,
+    "editor.wordWrap": "off",
+    "files.exclude": {
+        "**/.git": true,
+        "**/.svn": true,
+        "**/.hg": true,
+        "**/CVS": true,
+        "**/.DS_Store": true
+      },
+    
 }
