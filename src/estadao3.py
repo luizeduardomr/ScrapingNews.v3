@@ -98,6 +98,7 @@ def tempo(query, DIAi, MESi, ANOi, DIAf, MESf, ANOf, quit):
             GET('/html/body/section[5]/div/div/button').click()
         except:
             print('não clicou para fechar o anuncio ----------------------------')
+            pass
 
     # Clica no primeiro botão que é diferente dos demais
     try:
