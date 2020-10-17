@@ -262,7 +262,7 @@ def tempo(query, DIAi, MESi, ANOi, DIAf, MESf, ANOf, quit):
 
                 # Estou coletando direto o H2 justamente porque não é <p>, então não coletará nada no for de baixo.
                 elif(findElement('/html/body/section[2]/section/div[2]/div[1]/section/div/section/article/h2')!=0):
-                    content = TXT('/html/body/section[2]/section/div[2]/div[1]/section/div/section/article/h2')
+                    content = ('/html/body/section[2]/section/div[2]/div[1]/section/div/section/article/h2').text
 
                 # Se o conteúdo for diferente de erro, entra no for - pra cada <p> no conteudo, adiciona o texto do <p> na lista
                 if conteudo != 'erro no conteúdo':
