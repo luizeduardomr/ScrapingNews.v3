@@ -259,7 +259,11 @@ def tempo(query, DIAi, MESi, ANOi, DIAf, MESf, ANOf, quit):
 
                 elif(findElement('/html/body/section[1]/section/div[2]/div[2]/section/div/div/div/section/div/section[1]/div[3]') != 0):
                     conteudo = GET('/html/body/section[1]/section/div[2]/div[2]/section/div/div/div/section/div/section[1]/div[3]')
-                    
+
+                # Estou coletando direto o H2 justamente porque não é <p>, então não coletará nada no for de baixo.
+                elif(findElement('/html/body/section[2]/section/div[2]/div[1]/section/div/section/article/h2')!=0):
+                    content = TXT('/html/body/section[2]/section/div[2]/div[1]/section/div/section/article/h2')
+
                 # Se o conteúdo for diferente de erro, entra no for - pra cada <p> no conteudo, adiciona o texto do <p> na lista
                 if conteudo != 'erro no conteúdo':
                     for paragrafo in conteudo.find_elements_by_tag_name('p'):

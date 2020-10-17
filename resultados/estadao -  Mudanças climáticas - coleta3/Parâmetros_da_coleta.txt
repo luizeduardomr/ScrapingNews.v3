@@ -1,7 +1,0 @@
-Nome da pasta: estadao -  Mudanças climáticas - coleta3
-Palavra chave: Mudanças climáticas
-Site: estadao
-Data inicial: 01/01/2010
-Data final: 01/02/2010
-Notícias encontradas (no site): 236
-Resultados obtidos: 192

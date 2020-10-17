@@ -40,7 +40,7 @@ def Iniciar():
         nomearquivo = f'coleta{nomearquivo}'
     if(datainicial == '' and datafinal == ''):
         datainicial = '01/01/2010'
-        datafinal = '01/02/2010'
+        datafinal = '01/01/2011'
     if(palavrachave == ''):
         palavrachave = 'Mudanças climáticas'
     if(quantidade == ''):
