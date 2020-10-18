@@ -139,7 +139,6 @@ def tempo(query, DIAi, MESi, ANOi, DIAf, MESf, ANOf, quit):
         if(i==11 and pagina<=calculopage):
             i = 1
             pagina += 1
-            valores["coletadas"] += 10
 
 
         # Tenta pegar um 'clicavel' novo
@@ -168,6 +167,7 @@ def tempo(query, DIAi, MESi, ANOi, DIAf, MESf, ANOf, quit):
         if any(c in link for c in ('link.', 'tv.', 'paladar.', 'fim.', 'emais.', 'brpolitico.', 'einvestidor.', 'jornaldocarro.')):
             c -=1
             contador += 1
+            valores["ignoradas"] = valores["ignoradas"] + contador
             print(f' Filtrou conteudo: {i}  --- qntd: {contador}')
             continue
 
@@ -216,9 +216,6 @@ def tempo(query, DIAi, MESi, ANOi, DIAf, MESf, ANOf, quit):
         }
         )
 
-        #insere os valores no dicionário
-        valores["ignoradas"] += contador
-
     # Pra cada notica, abre o artigo e puxa o conteudo
     for i in range(len(data)):
         print(f'{i+1} de {len(data)}')
@@ -229,7 +226,7 @@ def tempo(query, DIAi, MESi, ANOi, DIAf, MESf, ANOf, quit):
             br.get(link)
         except:
             print_exc()
-            print(querylink)
+            print(f'\n{querylink}')
             continue
 
         # Coleta de conteúdo. Verifica se o conteúdo está no Fullpath do HTML.
@@ -239,10 +236,7 @@ def tempo(query, DIAi, MESi, ANOi, DIAf, MESf, ANOf, quit):
             lista = []
             conteudo = 'erro no conteúdo'
             try:
-                if(findElement('/html/body/section[2]/section/div[2]/div[2]/section/div/div/div/section/div/section[1]/div[1]/div[3]')!= 0):
-                    conteudo = GET('/html/body/section[2]/section/div[2]/div[2]/section/div/div/div/section/div/section[1]/div[1]/div[3]')
-
-                elif(findElement('/html/body/section[1]/section/div[2]/div[2]/section/div/div/div/section/div/section[1]/div[1]/div[3]')!= 0):
+                if(findElement('/html/body/section[1]/section/div[2]/div[2]/section/div/div/div/section/div/section[1]/div[1]/div[3]')!= 0):
                     conteudo = GET('/html/body/section[1]/section/div[2]/div[2]/section/div/div/div/section/div/section[1]/div[1]/div[3]')
 
                 elif(findElement('/html/body/section[2]/section/div[3]/div[2]/section/div/div/div/section/div/section[1]/div[1]/div[3]') != 0):
@@ -260,15 +254,22 @@ def tempo(query, DIAi, MESi, ANOi, DIAf, MESf, ANOf, quit):
                 elif(findElement('/html/body/section[1]/section/div[2]/div[2]/section/div/div/div/section/div/section[1]/div[3]') != 0):
                     conteudo = GET('/html/body/section[1]/section/div[2]/div[2]/section/div/div/div/section/div/section[1]/div[3]')
 
-                # Estou coletando direto o H2 justamente porque não é <p>, então não coletará nada no for de baixo.
-                elif(findElement('/html/body/section[2]/section/div[2]/div[1]/section/div/section/article/h2')!=0):
-                    content = ('/html/body/section[2]/section/div[2]/div[1]/section/div/section/article/h2').text
+                # Coleta o h2 ao invés de <p>
+                elif(findElement('/html/body/section[2]/section/div[2]/div[1]/section/div/section/article')!=0):
+                    conteudo = GET('/html/body/section[2]/section/div[2]/div[1]/section/div/section/article')
+                    for paragrafo in conteudo.find_elements_by_tag_name('h2'):
+                        lista.append(paragrafo.text)
+                    content = "\n".join(lista)
+                    continue
+                elif(findElement('/html/body/section[2]/section/div[2]/div[2]/section/div/div/div/section/div/section[1]/div[1]/div[3]')!=0):
+                    conteudo = GET('/html/body/section[2]/section/div[2]/div[2]/section/div/div/div/section/div/section[1]/div[1]/div[3]')
 
                 # Se o conteúdo for diferente de erro, entra no for - pra cada <p> no conteudo, adiciona o texto do <p> na lista
                 if conteudo != 'erro no conteúdo':
                     for paragrafo in conteudo.find_elements_by_tag_name('p'):
                         lista.append(paragrafo.text)
                     content = "\n".join(lista)  # Content recebe todo o conteúdo da lista "juntado"
+                    valores["coletadas"] = valores["coletadas"] +  1
             except:
                 content = 'erro no conteúdo durante a coleta de dados'
                 pass

@@ -122,7 +122,7 @@ def search(query, DIAi, MESi, ANOi, DIAf, MESf, ANOf):
             secaoNoticia = corpoglobal.find_element_by_tag_name('h3').text
         except:
             print('erro pra coletar link, título, data ou seção da notícia')
-            print(f'Notícia atual: {i} --- {querylink}')
+            print(f'Notícia atual: {i} --- {link}')
             pass
 
         

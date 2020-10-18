@@ -6,18 +6,15 @@ import re
 import traceback
 import json
 from src.interface import Iniciar
+from datetime import datetime
 
 # Faz a criação da pasta resultados
 if not os.path.exists('./resultados'):
     os.makedirs('./resultados')
 
-nomearquivo, palavrachave, opcao, datainicial, datafinal, quantidade = Iniciar()
+now = datetime.now()
 
-# Continua criando a pasta
-dir_path = os.path.join(
-    './resultados', f'{opcao} -  {palavrachave} - {nomearquivo}')
-if not os.path.exists(dir_path):
-    os.makedirs(dir_path)
+nomearquivo, palavrachave, opcao, datainicial, datafinal, quantidade = Iniciar()
 
 # Atribui as datas para as variáveis
 DIAi = datainicial.split("/")[0]
@@ -28,6 +25,13 @@ DIAf = datafinal.split("/")[0]
 MESf = datafinal.split("/")[1]
 ANOf = datafinal.split("/")[2]
 qntdresult = 0
+
+# Continua criando a pasta
+dir_path = os.path.join(
+    './resultados', f'{opcao} -  {palavrachave} - {ANOi} - {nomearquivo}')
+if not os.path.exists(dir_path):
+    os.makedirs(dir_path)
+
 
 # Começa as pesquisas
 results = []
@@ -41,6 +45,10 @@ elif opcao == 'uol':
 else:
     raise ValueError('Site Invalido')
 
+inicioh = now.hour
+iniciom = now.minute
+
+print(f"Hora inicial: {inicioh}:{iniciom}")
 # Realiza a pesquisa
 try:
     pesquisa, valor = site_atual.search(
@@ -96,3 +104,14 @@ with open('{}.csv'.format(os.path.join(dir_path, "Resultados_da_coleta")), 'w', 
             # Gera o arquivo de coleta
 with open('{}.txt'.format(os.path.join(dir_path, "Parâmetros_da_coleta")), 'w', encoding='utf-8') as text:
     text.write(f'Nome da pasta: {opcao} -  {palavrachave} - {nomearquivo}\nPalavra chave: {palavrachave}\nSite: {opcao}\nData inicial: {datainicial}\nData final: {datafinal}\nNotícias encontradas (no site): {valor}\nResultados obtidos: {qntdresult}')
+
+end = datetime.now()
+fimh = end.hour
+fimm = end.minute
+
+diferencah = fimh - inicioh
+diferencam = fimm - iniciom
+print("\n\n-----------------------------------------------------")
+print(f"Horário inicial da pesquisa: {inicioh}:{iniciom}")
+print(f"Horário final da pesquisa: {fimh}:{fimm}")
+print(f"Tempo percorrido: {diferencah}:{diferencam}")
