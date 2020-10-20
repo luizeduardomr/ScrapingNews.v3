@@ -164,7 +164,7 @@ def tempo(query, DIAi, MESi, ANOi, DIAf, MESf, ANOf, quit):
         link = el.get_attribute('href')
 
         # Filtro de conteúdo relevante
-        if any(c in link for c in ('link.', 'tv.', 'paladar.', 'fim.', 'emais.', 'brpolitico.', 'einvestidor.', 'jornaldocarro.')):
+        if any(c in link for c in ('link.', 'tv.', 'paladar.', 'fim.', 'emais.', 'brpolitico.', 'einvestidor.', 'jornaldocarro.', 'radio.')):
             c -=1
             contador += 1
             valores["ignoradas"] = valores["ignoradas"] + contador
@@ -235,6 +235,8 @@ def tempo(query, DIAi, MESi, ANOi, DIAf, MESf, ANOf, quit):
         try:
             lista = []
             conteudo = 'erro no conteúdo'
+            conteudo2 = ''
+            condicao = 0
             try:
                 if(findElement('/html/body/section[1]/section/div[2]/div[2]/section/div/div/div/section/div/section[1]/div[1]/div[3]')!= 0):
                     conteudo = GET('/html/body/section[1]/section/div[2]/div[2]/section/div/div/div/section/div/section[1]/div[1]/div[3]')
@@ -254,28 +256,50 @@ def tempo(query, DIAi, MESi, ANOi, DIAf, MESf, ANOf, quit):
                 elif(findElement('/html/body/section[1]/section/div[2]/div[2]/section/div/div/div/section/div/section[1]/div[3]') != 0):
                     conteudo = GET('/html/body/section[1]/section/div[2]/div[2]/section/div/div/div/section/div/section[1]/div[3]')
 
-                # Coleta o h2 ao invés de <p>
+                # Coleta o h2 ao invés de <p> / Depois é verificado se há texto e, se tiver, adiciona na mesma lista
                 elif(findElement('/html/body/section[2]/section/div[2]/div[1]/section/div/section/article')!=0):
-                    conteudo = GET('/html/body/section[2]/section/div[2]/div[1]/section/div/section/article')
-                    for paragrafo in conteudo.find_elements_by_tag_name('h2'):
-                        lista.append(paragrafo.text)
-                    content = "\n".join(lista)
-                    continue
-                elif(findElement('/html/body/section[2]/section/div[2]/div[2]/section/div/div/div/section/div/section[1]/div[1]/div[3]')!=0):
-                    conteudo = GET('/html/body/section[2]/section/div[2]/div[2]/section/div/div/div/section/div/section[1]/div[1]/div[3]')
+                    try:
+                        content = GET('/html/body/section[2]/section/div[2]/div[1]/section/div/section/article/h2').text
+                    except:
+                        pass
+                    if(findElement('/html/body/section[2]/section/div[2]/div[2]/section/div/div/div/section/div/section[1]/div[1]/div[3]')!=0):
+                        condicao = 1
+                        conteudo2 = GET('/html/body/section[2]/section/div[2]/div[2]/section/div/div/div/section/div/section[1]/div[1]/div[3]')
+                        for texto in conteudo2.find_elements_by_tag_name('p'):
+                            lista.append(texto.text)
+                        content = content + '\n' + "\n".join(lista)
+
+                # elif(findElement('/html/body/section[2]/section/div[2]/div[2]/section/div/div/div/section/div/section[1]/div[1]/div[3]')!=0 and condicao == 0):
+                #     conteudo = GET('/html/body/section[2]/section/div[2]/div[2]/section/div/div/div/section/div/section[1]/div[1]/div[3]')
 
                 # Se o conteúdo for diferente de erro, entra no for - pra cada <p> no conteudo, adiciona o texto do <p> na lista
                 if conteudo != 'erro no conteúdo':
                     for paragrafo in conteudo.find_elements_by_tag_name('p'):
                         lista.append(paragrafo.text)
                     content = "\n".join(lista)  # Content recebe todo o conteúdo da lista "juntado"
-                    valores["coletadas"] = valores["coletadas"] +  1
             except:
                 content = 'erro no conteúdo durante a coleta de dados'
                 pass
         except:
             print_exc()
         data[i]['content'] = content
+        valores["coletadas"] = valores["coletadas"] +  1
     print(querylink)
 
     return data, valor
+
+    # # Coleta o h2 ao invés de <p> / Depois é verificado se há texto e, se tiver, adiciona na mesma lista
+    # elif(findElement('/html/body/section[2]/section/div[2]/div[1]/section/div/section/article')!=0):
+    #     conteudo2 = GET('/html/body/section[2]/section/div[2]/div[1]/section/div/section/article')
+    #     for paragrafo in conteudo2.find_element_by_tag_name('h2'):
+    #         lista.append(paragrafo.text)
+    #     content = "\n".join(lista)
+    #     if(findElement('/html/body/section[2]/section/div[2]/div[2]/section/div/div/div/section/div/section[1]/div[1]/div[3]')!=0):
+    #         conteudo2 = GET('/html/body/section[2]/section/div[2]/div[2]/section/div/div/div/section/div/section[1]/div[1]/div[3]')
+    #         for texto in conteudo2.find_elements_by_tag_name('p'):
+    #             lista.append(texto.text)
+    #         content = "\n".join(lista)  # Content recebe todo o conteúdo da lista "juntado"
+
+    # elif(findElement('/html/body/section[2]/section/div[2]/div[2]/section/div/div/div/section/div/section[1]/div[1]/div[3]')!=0):
+    #     if(findElement('/html/body/section[2]/section/div[2]/div[1]/section/div/section/article')==0):
+    #         conteudo = GET('/html/body/section[2]/section/div[2]/div[2]/section/div/div/div/section/div/section[1]/div[1]/div[3]')

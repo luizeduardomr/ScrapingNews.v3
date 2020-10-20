@@ -54,7 +54,7 @@ try:
     pesquisa, valor = site_atual.search(
         query=palavrachave, DIAi=DIAi, MESi=MESi, ANOi=ANOi, DIAf=DIAf, MESf=MESf, ANOf=ANOf)
     print(
-        f'Finalização da pesquisa -- Nome do arquivo: {opcao} -  {palavrachave} - {nomearquivo}')
+        f'Finalização da pesquisa -- Nome do arquivo: {opcao} - {palavrachave} - {ANOi} - {nomearquivo}')
 finally:
     site_atual.END()
 # Pra cada resultado da pesquisa, adiciona o resultado na lista 'results'
@@ -83,6 +83,10 @@ with open('{}.csv'.format(os.path.join(dir_path, "Resultados_da_coleta")), 'w', 
             res['secao'] = res['secao'].replace('?', '')
             res['secao'] = res['secao'].replace('!', '')
             res['secao'] = res['secao'].replace(':', '')
+            res['secao'] = res['secao'].replace('/', '')
+            res['secao'] = res['secao'].replace('\'', '')
+
+
         # res['secao'] = unicodedata.normalize("NFD", res['secao'])
         # res['secao'] = res['secao'].encode("ascii", "ignore")
         # res['secao'] = res['secao'].decode("utf-8")
@@ -98,12 +102,12 @@ with open('{}.csv'.format(os.path.join(dir_path, "Resultados_da_coleta")), 'w', 
             try:
                 content = res['title'] + '\n\n' + res['content']
             except KeyError:
-                content = 'Algo deu errado - main l.67 KeyError - Informar ao desenvolvedor'
+                content = 'Algo deu errado - main l.101 KeyError - Informar ao desenvolvedor'
             text.write(content)
             qntdresult += 1
             # Gera o arquivo de coleta
 with open('{}.txt'.format(os.path.join(dir_path, "Parâmetros_da_coleta")), 'w', encoding='utf-8') as text:
-    text.write(f'Nome da pasta: {opcao} -  {palavrachave} - {nomearquivo}\nPalavra chave: {palavrachave}\nSite: {opcao}\nData inicial: {datainicial}\nData final: {datafinal}\nNotícias encontradas (no site): {valor}\nResultados obtidos: {qntdresult}')
+    text.write(f'Nome da pasta: {opcao} -  {palavrachave} - {ANOi} - {nomearquivo}\nPalavra chave: {palavrachave}\nSite: {opcao}\nData inicial: {datainicial}\nData final: {datafinal}\nNotícias encontradas (no site): {valor}\nResultados obtidos: {qntdresult}')
 
 end = datetime.now()
 fimh = end.hour
@@ -114,4 +118,4 @@ diferencam = fimm - iniciom
 print("\n\n-----------------------------------------------------")
 print(f"Horário inicial da pesquisa: {inicioh}:{iniciom}")
 print(f"Horário final da pesquisa: {fimh}:{fimm}")
-print(f"Tempo percorrido: {diferencah}:{diferencam}")
+print(f"Tempo percorrido: {diferencah}:{diferencam}\n--------------------------------------------------------------\n\n")

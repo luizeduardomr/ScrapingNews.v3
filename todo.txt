@@ -2,3 +2,7 @@ Pastas principais: Estadão / Folha / Uol
     -> 2010 / 2011 / 2012 / 2013 / 2014 / 2015 ...
     -> Mudanças clmáticas / Aquecimento Global / Crise clmática
     -> coleta
+
+
+#refazer a coleta 2013 estadao mudanças climaticas e verificar a categoria ECONOMIA noticia Perda global de confiança na política econômica
+que tinha dado erro pra pegar o conteudo

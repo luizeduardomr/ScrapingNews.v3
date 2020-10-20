@@ -86,10 +86,10 @@ def search(query, DIAi, MESi, ANOi, DIAf, MESf, ANOf):
                         pass
                 i = 0
                 continue
-                time.sleep(1)
             else:
                 print('erro pra pular de página-------------------------------------')
         # Tenta pegar a proxima noticia
+
         try:
             if(findElement(f'/html/body/main/div/div/form/div[2]/div/div/div[2]/ol/li[{i}]') != 0):
                 corpoglobal = WAIT_GET(f'/html/body/main/div/div/form/div[2]/div/div/div[2]/ol/li[{i}]')
@@ -110,6 +110,7 @@ def search(query, DIAi, MESi, ANOi, DIAf, MESf, ANOf):
                 descr = corpoglobal.find_element_by_tag_name('b').text
             except:
                 descr = 'Não há descrição nesta notícia'
+                pass
         
         link = ''
         title = ''
@@ -117,11 +118,29 @@ def search(query, DIAi, MESi, ANOi, DIAf, MESf, ANOf):
         secaoNoticia= ''
         try:
             link = corpoglobal.find_element_by_tag_name('a').get_attribute('href')
+        except:
+            print(f'erro pra coletar o link:\n {link}\n')
+            print(f'Notícia atual: {i}\n')
+            pass
+
+        try:
             title = clear(corpoglobal.find_element_by_class_name('c-headline__title'))
+        except:
+            print(f'erro pra coletar o titulo:\n {link}\n')
+            print(f'Notícia atual: {i}\n')
+            pass
+
+        try:
             date = corpoglobal.find_element_by_tag_name('time').get_attribute('datetime')
+        except:
+            print(f'erro pra coletar a data:\n {link}\n')
+            print(f'Notícia atual: {i}\n')
+            pass
+
+        try:
             secaoNoticia = corpoglobal.find_element_by_tag_name('h3').text
         except:
-            print('erro pra coletar link, título, data ou seção da notícia')
+            print('erro pra coletar seção da notícia')
             print(f'Notícia atual: {i} --- {link}')
             pass
 
