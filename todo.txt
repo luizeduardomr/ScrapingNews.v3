@@ -4,5 +4,10 @@ Pastas principais: Estadão / Folha / Uol
     -> coleta
 
 
-#refazer a coleta 2013 estadao mudanças climaticas e verificar a categoria ECONOMIA noticia Perda global de confiança na política econômica
-que tinha dado erro pra pegar o conteudo
+# 2016 pra frente ta tudo errado
+#refazer todo o código de ifs estranhos..
+
+
+
+
+https://economia.estadao.com.br/noticias/geral,quem-tem-medo-do-petroleo-barato,10000013385

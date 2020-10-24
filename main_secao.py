@@ -1,7 +1,7 @@
 import os  # importa o sistema
 import json
 import csv  # importa o CSV para gerar arquivos
-import src.verify  # Baixa os arquivos para o selenium
+import src.verify
 import re
 import traceback
 import json
@@ -85,7 +85,7 @@ with open('{}.csv'.format(os.path.join(dir_path, "Resultados_da_coleta")), 'w', 
             res['secao'] = res['secao'].replace(':', '')
             res['secao'] = res['secao'].replace('/', '')
             res['secao'] = res['secao'].replace('\'', '')
-
+            res['secao'] = res['secao'].replace('|', '')
 
         # res['secao'] = unicodedata.normalize("NFD", res['secao'])
         # res['secao'] = res['secao'].encode("ascii", "ignore")
@@ -98,7 +98,7 @@ with open('{}.csv'.format(os.path.join(dir_path, "Resultados_da_coleta")), 'w', 
         if not os.path.exists(sec_path):
             os.makedirs(sec_path)
         with open('{}.txt'.format(os.path.join(sec_path, res['date'] + ' - ' + arquivotxt[:20])), 'w', encoding='utf-8') as text:
-            res['content'] = re.sub('\n+', '\n', res['content'])
+            res['content'] = re.sub('\n+', '\n', str(res['content']))
             try:
                 content = res['title'] + '\n\n' + res['content']
             except KeyError:

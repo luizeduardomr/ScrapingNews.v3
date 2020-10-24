@@ -239,25 +239,32 @@ def tempo(query, DIAi, MESi, ANOi, DIAf, MESf, ANOf, quit):
             condicao = 0
             try:
                 if(findElement('/html/body/section[1]/section/div[2]/div[2]/section/div/div/div/section/div/section[1]/div[1]/div[3]')!= 0):
+                    print('entrou 1')
                     conteudo = GET('/html/body/section[1]/section/div[2]/div[2]/section/div/div/div/section/div/section[1]/div[1]/div[3]')
 
                 elif(findElement('/html/body/section[2]/section/div[3]/div[2]/section/div/div/div/section/div/section[1]/div[1]/div[3]') != 0):
+                    print('entrou 2')
                     conteudo = GET('/html/body/section[2]/section/div[3]/div[2]/section/div/div/div/section/div/section[1]/div[1]/div[3]')
 
                 elif(findElement('/html/body/section[3]/section/div[3]/div[2]/section/div/div/div/section/div/section[1]/div[1]/div[3]') != 0):
+                    print('entrou 3')
                     conteudo = GET('/html/body/section[3]/section/div[3]/div[2]/section/div/div/div/section/div/section[1]/div[1]/div[3]')
-                
-                elif(findElement('/html/body/section[3]/section/div[2]/div[2]/section/div/div/div/section/div/section[1]/div[1]/div[3]') != 0):
-                    conteudo = GET('/html/body/section[3]/section/div[2]/div[2]/section/div/div/div/section/div/section[1]/div[1]/div[3]')
-                
+
                 elif(findElement('/html/body/div[4]/section/section/div[3]/section/div/div/div/section/div/section[1]/div[2]') != 0):
+                    print('entrou 4')
                     conteudo = GET('/html/body/div[4]/section/section/div[3]/section/div/div/div/section/div/section[1]/div[2]')
 
                 elif(findElement('/html/body/section[1]/section/div[2]/div[2]/section/div/div/div/section/div/section[1]/div[3]') != 0):
+                    print('entrou 5')
                     conteudo = GET('/html/body/section[1]/section/div[2]/div[2]/section/div/div/div/section/div/section[1]/div[3]')
+
+                elif(findElement('/html/body/div[6]/article/div[2]/div/div[1]/div[2]') != 0):
+                    print('entrou 6')
+                    conteudo = GET('/html/body/div[6]/article/div[2]/div/div[1]/div[2]')
 
                 # Coleta o h2 ao invés de <p> / Depois é verificado se há texto e, se tiver, adiciona na mesma lista
                 elif(findElement('/html/body/section[2]/section/div[2]/div[1]/section/div/section/article')!=0):
+                    print('entrou 7')
                     try:
                         content = GET('/html/body/section[2]/section/div[2]/div[1]/section/div/section/article/h2').text
                     except:
@@ -269,23 +276,87 @@ def tempo(query, DIAi, MESi, ANOi, DIAf, MESf, ANOf, quit):
                             lista.append(texto.text)
                         content = content + '\n' + "\n".join(lista)
 
-                # elif(findElement('/html/body/section[2]/section/div[2]/div[2]/section/div/div/div/section/div/section[1]/div[1]/div[3]')!=0 and condicao == 0):
-                #     conteudo = GET('/html/body/section[2]/section/div[2]/div[2]/section/div/div/div/section/div/section[1]/div[1]/div[3]')
+                # Coleta de título com legenda. Verifica se tem o article geral, depois tenta coletar o h2 (legenda) e o texto da notícia
+                elif(findElement('/html/body/section[2]/section/div[4]/div[1]/section/div/section/article')!=0):
+                    print('entrou 8')
+                    try:
+                        content = GET('/html/body/section[2]/section/div[4]/div[1]/section/div/section/article/h2').text
+                    except:
+                        pass
+                    if(findElement('/html/body/section[2]/section/div[4]/div[2]/section/div/div/div/section/div/section[1]/div[1]/div[3]')!=0):
+                        conteudo2 = GET('/html/body/section[2]/section/div[4]/div[2]/section/div/div/div/section/div/section[1]/div[1]/div[3]')
+                        for texto in conteudo2.find_elements_by_tag_name('p'):
+                            lista.append(texto.text)
+                        content = content + '\n' + "\n".join(lista)
 
+                # Tenta coletar a imagem 1
+                elif(findElement('/html/body/section[3]/div[1]/section/div[2]/div/section/section/div/section/div/div[1]/ul/li/figure/a/img')!=0):
+                    print('entrou 9')
+                    content = 'Notícia com apenas foto e legenda.' + '\n\n' 'Foto:' + '\n' + GET('/html/body/section[3]/div[1]/section/div[2]/div/section/section/div/section/div/div[1]/ul/li/figure/a/img').get_attribute('src')
+                    if(findElement('/html/body/section[3]/div[1]/section/div[2]/div/section/section/div/section/div/div[2]/div[3]')!=0):
+                        try:
+                            content = content + '\n' + 'Legenda:' + '\n' + GET('/html/body/section[3]/div[1]/section/div[2]/div/section/section/div/section/div/div[2]/div[3]/h4/span').text
+                        except:
+                            content = 'Sem legenda principal'
+                            pass
+                        try:
+                            content = content + '\n' + GET('/html/body/section[3]/div[1]/section/div[2]/div/section/section/div/section/div/div[2]/div[3]/div/p').text
+                        except:
+                            content = 'Sem legenda secundária'
+                            pass
+
+                #Tenta coletar a imagem 2
+                elif(findElement('/html/body/section[3]/div[1]/section/div[2]/div/div/div/section/section/div/section/div/div[1]/ul/li[1]/figure/a/img')!=0):
+                    print('entrou 10')
+                    content = 'Notícia com apenas foto e legenda.' + '\n\n' 'Foto:' + '\n' + GET('/html/body/section[3]/div[1]/section/div[2]/div/div/div/section/section/div/section/div/div[1]/ul/li[1]/figure/a/img').get_attribute('src')
+                    if(findElement('/html/body/section[3]/div[1]/section/div[2]/div/div/div/section/section/div/section/div/div[2]/div[3]')!=0):
+                        try:
+                            content = content + '\n' + 'Legenda:' + '\n' + GET('/html/body/section[3]/div[1]/section/div[2]/div/div/div/section/section/div/section/div/div[2]/div[3]/h4/span').text
+                        except:
+                            content = 'Sem legenda principal'
+                            pass
+                        try:
+                            content = content + '\n' + GET('/html/body/section[3]/div[1]/section/div[2]/div/div/div/section/section/div/section/div/div[2]/div[3]/div/p').text
+                        except:
+                            content = 'Sem legenda secundária'
+                            pass
+
+                # Coleta legenda e conteúdo da notícia com DIVS
+                elif(findElement('/html/body/div[3]/section/section/div[3]/section/div/div/div/section/div/section[1]/div[2]')!=0):
+                    print('entrou 11')
+                    try:
+                        content = content + GET('/html/body/div[3]/section/section/div[2]/section/div/section/article/h2').text + "\n"
+                    except:
+                        pass
+                    conteudo = GET('/html/body/div[3]/section/section/div[3]/section/div/div/div/section/div/section[1]/div[2]')
+
+                elif(findElement('/html/body/section[3]/section/div[2]/div[2]/section/div/div/div/section/div/section[1]/div[1]/div[3]') != 0):
+                    print('entrou 12')
+                    if(findElement('/html/body/section[3]/section/div[2]/div[2]/section/div/div/div/section/div/section[1]/div[1]/div[3]/div[1]')!=0):
+                        print('12.1')
+                        try:
+                            content = GET('/html/body/section[3]/section/div[2]/div[1]/section/div/section/article/h2').text
+                        except:
+                            pass
+                        if(findElement('/html/body/section[3]/section/div[2]/div[2]/section/div/div/div/section/div/section[1]/div[1]/div[3]')!=0):
+                            print('entrou no conteudo')
+                            conteudo2 = GET('html/body/section[3]/section/div[2]/div[2]/section/div/div/div/section/div/section[1]/div[1]/div[3]')
+                            for texto in conteudo2.find_elements_by_tag_name('p'):
+                                lista.append(texto.text)
+                            content = content + '\n' + "\n".join(lista)
+                        
                 # Se o conteúdo for diferente de erro, entra no for - pra cada <p> no conteudo, adiciona o texto do <p> na lista
                 if conteudo != 'erro no conteúdo':
+                    print('é diferente')
                     for paragrafo in conteudo.find_elements_by_tag_name('p'):
                         lista.append(paragrafo.text)
-                    content = "\n".join(lista)  # Content recebe todo o conteúdo da lista "juntado"
+                    content = content + "\n".join(lista)  # Content recebe todo o conteúdo da lista "juntado"
             except:
                 content = 'erro no conteúdo durante a coleta de dados'
-                pass
         except:
             print_exc()
-        data[i]['content'] = content
+        data[i]['content'] = str(content)
         valores["coletadas"] = valores["coletadas"] +  1
-    print(querylink)
-
     return data, valor
 
     # # Coleta o h2 ao invés de <p> / Depois é verificado se há texto e, se tiver, adiciona na mesma lista
