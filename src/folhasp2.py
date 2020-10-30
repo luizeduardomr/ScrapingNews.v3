@@ -27,6 +27,17 @@ def search(query, DIAi, MESi, ANOi, DIAf, MESf, ANOf):
         GET('/html/body/main/section/div[2]/div/div[1]/div/div/form/div[2]/input').send_keys('SenhaPraias0')
         time.sleep(.5)
         try:
+            # Clica para aceitar os Cookies (TEMPORÁRIO)
+            if(clickNow('/html/body/div[11]/div/div[2]/button') == 0):
+                try:
+                    CLICK('/html/body/div[11]/div/div[2]/button')
+                except:
+                    try:
+                        CLASS('banner-lgpd-consent__accept').click()
+                    except:
+                        print('erro pra clicar nos Cookies')
+                        pass
+            time.sleep(.5)
             GET('/html/body/main/section/div[2]/div/div[1]/div/div/form/div[4]/button').click()
         except:
             print_exc()
@@ -208,7 +219,6 @@ def search(query, DIAi, MESi, ANOi, DIAf, MESf, ANOf):
 
                     elif(findElement(f'/html/body/div[1]/div[1]/div[8]/div')!=0):
                         conteudo = GET(f'/html/body/div[1]/div[1]/div[8]/div')
-
                     elif(findElement(f'/html/body/div[2]/div[2]/div[2]/div[2]/div[1]/article/div[2]')!=0):
                         conteudo = GET(f'/html/body/div[2]/div[2]/div[2]/div[2]/div[1]/article/div[2]')
 
@@ -224,8 +234,7 @@ def search(query, DIAi, MESi, ANOi, DIAf, MESf, ANOf):
                     elif(findElement('/html/body/div[2]/div[2]/div[1]/div[2]/div') != 0):
                         conteudo = GET('/html/body/div[2]/div[2]/div[1]/div[2]/div')
                     
-                    elif(findElement('/html/body/div[2]/div[2]/div[2]/div[2]/div[1]/article/div[2]') != 0):
-                        conteudo = GET('/html/body/div[2]/div[2]/div[2]/div[2]/div[1]/article/div[2]')
+                    
                     # Se o conteúdo for diferente de erro, entra no for - pra cada <p> no conteudo, adiciona o texto do <p> na lista
                     if conteudo != 'erro no conteúdo':
                         # print('conteudo entrou no if != erro no conteúdo --- logo vai coletar o p')
