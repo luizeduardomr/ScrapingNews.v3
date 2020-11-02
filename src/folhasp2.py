@@ -103,15 +103,14 @@ def search(query, DIAi, MESi, ANOi, DIAf, MESf, ANOf):
 
         try:
             if(findElement(f'/html/body/main/div/div/form/div[2]/div/div/div[2]/ol/li[{i}]') != 0):
-                corpoglobal = WAIT_GET(f'/html/body/main/div/div/form/div[2]/div/div/div[2]/ol/li[{i}]')
-            elif(findElement(f'/html/body/main/div/div/form/div[2]/div/div/div[2]/ol/li[{i}]') != 0):
-                corpoglobal = WAIT_GET(f'/html/body/main/div/div/form/div[2]/div/div/div[2]/ol/li[{i}]')                
+                corpoglobal = WAIT_GET(f'/html/body/main/div/div/form/div[2]/div/div/div[2]/ol/li[{i}]')              
         except:
             # Se nao tiver, tenta avancar para a proxima pagina
             if(findElement('/html/body/main/div/div/form/div[2]/div/div/div[2]/nav/ul/li[8]/a') != 0):
                 CLICK('/html/body/main/div/div/form/div[2]/div/div/div[2]/nav/ul/li[8]/a')
             else:
-                pass
+                print(f'erro pra coletar o corpo da notícia:\n {link}\n')
+                print(f'Notícia atual: {i}\n')
 
         # Pega as informacoes do headline da noticia
         try:
@@ -130,16 +129,16 @@ def search(query, DIAi, MESi, ANOi, DIAf, MESf, ANOf):
         try:
             link = corpoglobal.find_element_by_tag_name('a').get_attribute('href')
         except:
-            print(f'erro pra coletar o link:\n {link}\n')
-            print(f'Notícia atual: {i}\n')
+            print(f'erro pra coletar o link:\n {link}')
+            print(f'Notícia atual: {i}')
             pass
 
-        try:
+        try:    
             title = clear(corpoglobal.find_element_by_class_name('c-headline__title'))
         except:
             print(f'erro pra coletar o titulo:\n {link}\n')
             print(f'Notícia atual: {i}\n')
-            pass
+            continue
 
         try:
             date = corpoglobal.find_element_by_tag_name('time').get_attribute('datetime')
@@ -200,8 +199,8 @@ def search(query, DIAi, MESi, ANOi, DIAf, MESf, ANOf):
             conteudo = wait(
                 lambda: CLASS('c-news__body'),
                 lambda: CLASS('js-news-content'),
-                lambda: CLASS('c-news__content')
-                #lambda: CLASS('content')
+                lambda: CLASS('c-news__content'),
+                lambda: ID('articleNew')
                 )
             # Se o conteúdo for diferente de erro, entra no for - pra cada <p> no conteudo, adiciona o texto do <p> na lista
             if conteudo != 'erro no conteúdo':
@@ -211,14 +210,12 @@ def search(query, DIAi, MESi, ANOi, DIAf, MESf, ANOf):
                 content = "\n".join(lista)  # Content recebe todo o conteúdo da lista "juntado"
         except:
             try:
-                    if(findElement('/html/body/table[5]/tbody/tr/td[2]/') != 0):
-                        conteudo = GET('/html/body/table[5]/tbody/tr/td[2]/')
-
-                    elif(findElement(f'/html/body/table[5]/tbody/tr/td[2]')!=0):
-                        conteudo = GET(f'/html/body/table[5]/tbody/tr/td[2]')
+                    if(findElement('/html/body/table[5]/tbody/tr/td[2]') != 0):
+                        content = GET('/html/body/table[5]/tbody/tr/td[2]').text
 
                     elif(findElement(f'/html/body/div[1]/div[1]/div[8]/div')!=0):
                         conteudo = GET(f'/html/body/div[1]/div[1]/div[8]/div')
+
                     elif(findElement(f'/html/body/div[2]/div[2]/div[2]/div[2]/div[1]/article/div[2]')!=0):
                         conteudo = GET(f'/html/body/div[2]/div[2]/div[2]/div[2]/div[1]/article/div[2]')
 
@@ -228,11 +225,14 @@ def search(query, DIAi, MESi, ANOi, DIAf, MESf, ANOf):
                     elif(findElement(f'/html/body/div[1]/div[6]/div')!=0):
                         conteudo = GET(f'/html/body/div[1]/div[6]/div')
 
-                    elif(findElement(f'/html/body/div[1]/div/div[8]/div')!=0):
+                    elif(findElement(f'/hStml/body/div[1]/div/div[8]/div')!=0):
                         conteudo = GET(f'/html/body/div[1]/div/div[8]/div')
 
                     elif(findElement('/html/body/div[2]/div[2]/div[1]/div[2]/div') != 0):
                         conteudo = GET('/html/body/div[2]/div[2]/div[1]/div[2]/div')
+
+                    elif(findElement('/html/body/div[2]/div[2]/div[2]/div/div[1]/article/div[2]')!=0):
+                        conteudo = GET('/html/body/div[2]/div[2]/div[2]/div/div[1]/article/div[2]')
                     
                     
                     # Se o conteúdo for diferente de erro, entra no for - pra cada <p> no conteudo, adiciona o texto do <p> na lista
