@@ -58,11 +58,14 @@ def search(query, DIAi, MESi, ANOi, DIAf, MESf, ANOf):
         print(valor)
     except:
         valor = 5
+    
+    print(valor)
 
     data = []
 
     i = 0
     c = 0
+    count = 0
 
     # Clica para aceitar os Cookies (TEMPORÁRIO)
     if(clickNow('/html/body/div[11]/div/div[2]/button') == 0):
@@ -152,7 +155,7 @@ def search(query, DIAi, MESi, ANOi, DIAf, MESf, ANOf):
         except:
             print('erro pra coletar seção da notícia')
             print(f'Notícia atual: {i} --- {link}')
-            pass
+            pass    
 
         
         # descr = clear(el.find_element_by_tag_name('p'))
@@ -164,6 +167,7 @@ def search(query, DIAi, MESi, ANOi, DIAf, MESf, ANOf):
 
         if any ([x in secaoNoticia for x in['FOTOFOLHA']]):
             c -= 1
+            count+=1
             continue
 
         # Coleta a informação de Imagem
@@ -172,10 +176,10 @@ def search(query, DIAi, MESi, ANOi, DIAf, MESf, ANOf):
         else:
             isImagemtxt = 'Não tem imagem'
 
-        print(f'{i} - {title}')
-
         if(' - ' in secaoNoticia):
             secaoNoticia = secaoNoticia.split(' - ')[1]
+        
+        print(f'{i} - {title} - {count}')
         data.append({
             'link': link,
             'title': title,
@@ -190,8 +194,11 @@ def search(query, DIAi, MESi, ANOi, DIAf, MESf, ANOf):
     # Para cada notica, abre o artigo e puxa o conteudo
     for i in range(len(data)):
         print(f'{i+1} de {len(data)}')
-        link = data[i]['link']
-        br.get(link)
+        link = str(data[i]['link'])
+        try:
+            br.get(link)
+        except:
+            continue
         lista = []
         content = 'não pegou o conteúdo'
         try:
