@@ -1,5 +1,5 @@
 
-# Scraping News v2
+# Scraping News v3
 This project consists of a code was developed using the Selenium, a web-based application automation framework through browsers. 
 
 The code leaves the search page of news sites with a filter for a period of time, filling the search field with the keywords. Like result, relevant news about the keywords is shown in a period of time. For each news item, the algorithm collects the title, description, date and full news URL. After collecting all this information, the algorithm enters each stored URL and collects the news content.
